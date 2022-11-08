@@ -4,13 +4,14 @@ const objectId=require("mongodb").ObjectId
 
 
 const validation=function(req,res,next){
+   try{
     const token=req.headers["x-auth-token"]
     if(!token){
-        return res.send({status:false,msg:"token is missing"})
+        return res.status(400).send({status:false,msg:"token is missing"})
     }
-    
+   
     if(!objectId.isValid(req.params.userId)){
-        return res.send({status:false,msg:"user Id is not valid"})
+        return res.status(400).send({status:false,msg:"user Id is not valid"})
     }
 
 
@@ -20,11 +21,14 @@ const validation=function(req,res,next){
             next()
         }
         else{
-            return res.send({status:false,msg:"token does not match"})
+            return res.status(403).send({status:false,msg:"token does not match"})
         }
     }
     else{
-        return res.send("token is invalid")
+        return res.status(400).send("token is invalid")
+    }}
+    catch(error){
+      res.status(500).send({error:error})
     }
 
 }
